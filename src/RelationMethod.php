@@ -99,10 +99,13 @@ class RelationMethod implements Arrayable
     public function foreignKey(): string
     {
         $relationObj = $this->getRelation();
-
-        return method_exists($relationObj, 'getForeignKeyName')
-            ? $relationObj->getForeignKeyName()
-            : $relationObj->getForeignKey();
+        if (method_exists($relationObj, 'getForeignKeyName')) {
+            return $relationObj->getForeignKeyName();
+        }
+        if (method_exists($relationObj, 'getForeignPivotKeyName')) {
+            return $relationObj->getForeignPivotKeyName();
+        }
+        throw new \RuntimeException("Unexpected relationship type");
     }
 
     public function ownerKey(): string
